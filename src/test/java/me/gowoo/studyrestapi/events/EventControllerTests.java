@@ -1,12 +1,14 @@
 package me.gowoo.studyrestapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -14,10 +16,10 @@ import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 public class EventControllerTests {
     @Autowired
     MockMvc mockMvc;
@@ -25,12 +27,10 @@ public class EventControllerTests {
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
-    EventRepository eventRepository;
-
     @Test
     public void creatEvent() throws Exception {
         Event event = Event.builder()
+                .id(100)
                 .name("Spring")
                 .description("rest api practice")
                 .beginEnrollmentDateTime(LocalDateTime.of(2020,11,29,17,24))
@@ -39,12 +39,15 @@ public class EventControllerTests {
                 .endEventDateTime(LocalDateTime.of(2020,11,29,17,01))
                 .basePrice(100)
                 .maxPrice(200)
+                .free(true)
+                .offline(true)
                 .limitOfEnrollment(100)
                 .location("강남역")
                 .build();
 
-        event.setId(10);
-        Mockito.when(eventRepository.save(event)).thenReturn(event);
+        /*mock 객체는 null을 return하기 때문에  contoller에서
+        * null에 save를 수행해 null Exception이 발생한다. save가 수행할때 event가 들어가게 mocking을 해주자*/
+        //Mockito.when(eventRepository.save(event)).thenReturn(event); (@MockBean, @MockMvc)
 
         mockMvc.perform(post("/api/events")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -52,6 +55,11 @@ public class EventControllerTests {
                     .content(objectMapper.writeValueAsString(event)))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").exists());
+                .andExpect(jsonPath("id").exists())
+                .andExpect(header().exists(HttpHeaders.LOCATION))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE,"application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("id").value(Matchers.not(100))) //id,free..와 같은 필드는 입력할 수 없는 값이어야한다.
+                .andExpect(jsonPath("free").value(Matchers.not(true))) //id,free..와 같은 필드는 입력할 수 없는 값이어야한다.
+        ;
     }
 }
