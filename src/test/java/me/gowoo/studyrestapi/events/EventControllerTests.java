@@ -33,10 +33,10 @@ public class EventControllerTests {
         EventDto event = EventDto.builder()
                 .name("Spring")
                 .description("rest api practice")
-                .beginEnrollmentDateTime(LocalDateTime.of(2020,11,27,17,24))
+                .beginEnrollmentDateTime(LocalDateTime.of(2020,10,28,17,24))
                 .closeEnrollmentDateTime(LocalDateTime.of(2020,11,28,17,33))
-                .beginEventDateTime(LocalDateTime.of(2020,11,29,17,53))
-                .endEventDateTime(LocalDateTime.of(2020,11,30,17,01))
+                .beginEventDateTime(LocalDateTime.of(2020,11,20,17,53))
+                .endEventDateTime(LocalDateTime.of(2020,12,20,17,1))
                 .basePrice(100)
                 .maxPrice(200)
                 .limitOfEnrollment(100)
@@ -47,10 +47,10 @@ public class EventControllerTests {
         * null에 save를 수행해 null Exception이 발생한다. save가 수행할때 event가 들어가게 mocking을 해주자*/
         //Mockito.when(eventRepository.save(event)).thenReturn(event); (@MockBean, @MockMvc)
 
-        mockMvc.perform(post("/api/events")
+        this.mockMvc.perform(post("/api/events")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaTypes.HAL_JSON)
-                    .content(objectMapper.writeValueAsString(event)))
+                    .content(this.objectMapper.writeValueAsString(event)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
@@ -62,16 +62,16 @@ public class EventControllerTests {
     }
 
     @Test
-    @DisplayName("접근 불가능한 id,price 값 지정하는 경우 에러발생")
+    @DisplayName("접근 불가능한 id,free등 파라미터 지정하는 경우 에러발생")
     public void creatEventBadRequest() throws Exception {
         Event event = Event.builder()
                 .id(100)
                 .name("Spring")
                 .description("rest api practice")
-                .beginEnrollmentDateTime(LocalDateTime.of(2020,11,27,17,24))
+                .beginEnrollmentDateTime(LocalDateTime.of(2020,10,28,17,24))
                 .closeEnrollmentDateTime(LocalDateTime.of(2020,11,28,17,33))
-                .beginEventDateTime(LocalDateTime.of(2020,11,29,17,53))
-                .endEventDateTime(LocalDateTime.of(2020,11,30,17,01))
+                .beginEventDateTime(LocalDateTime.of(2020,11,20,17,53))
+                .endEventDateTime(LocalDateTime.of(2020,12,20,17,1))
                 .basePrice(100)
                 .maxPrice(200)
                 .free(true)
@@ -80,16 +80,11 @@ public class EventControllerTests {
                 .location("강남역")
                 .build();
 
-        /*mock 객체는 null을 return하기 때문에  contoller에서
-        * null에 save를 수행해 null Exception이 발생한다. save가 수행할때 event가 들어가게 mocking을 해주자*/
-        //Mockito.when(eventRepository.save(event)).thenReturn(event); (@MockBean, @MockMvc)
-
-        mockMvc.perform(post("/api/events")
+        this.mockMvc.perform(post("/api/events")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaTypes.HAL_JSON)
-                    .content(objectMapper.writeValueAsString(event)))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
+                    .content(this.objectMapper.writeValueAsString(event)))
+                    .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -100,34 +95,33 @@ public class EventControllerTests {
         this.mockMvc.perform(post("/api/events")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(this.objectMapper.writeValueAsString(eventDto)))
-            .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("입력값의 잘못된 경우(조건값이 다른 경우) 에러 발생")
     public void creatEventBadRequest_wrong_input() throws Exception {
-        Event event = Event.builder()
+        EventDto eventDto = EventDto.builder()
                 .name("Spring")
                 .description("rest api practice")
-                .beginEnrollmentDateTime(LocalDateTime.of(2020,11,29,17,24))
-                .closeEnrollmentDateTime(LocalDateTime.of(2020,11,29,17,33))
-                .beginEventDateTime(LocalDateTime.of(2020,11,29,17,53))
-                .endEventDateTime(LocalDateTime.of(2020,11,20,17,01))
+                .beginEnrollmentDateTime(LocalDateTime.of(2020,10,28,17,24))
+                .closeEnrollmentDateTime(LocalDateTime.of(2020,11,28,17,33))
+                .beginEventDateTime(LocalDateTime.of(2020,10,25,17,53))
+                .endEventDateTime(LocalDateTime.of(2020,12,20,17,1))
                 .basePrice(100)
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("강남역")
                 .build();
 
-        /*mock 객체는 null을 return하기 때문에  contoller에서
-         * null에 save를 수행해 null Exception이 발생한다. save가 수행할때 event가 들어가게 mocking을 해주자*/
-        //Mockito.when(eventRepository.save(event)).thenReturn(event); (@MockBean, @MockMvc)
-
-        mockMvc.perform(post("/api/events")
+        this.mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaTypes.HAL_JSON)
-                .content(objectMapper.writeValueAsString(event)))
+                .content(this.objectMapper.writeValueAsString(eventDto)))
+                .andExpect(status().isBadRequest())
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$[0].objectName").exists())
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
+        ;
     }
 }
