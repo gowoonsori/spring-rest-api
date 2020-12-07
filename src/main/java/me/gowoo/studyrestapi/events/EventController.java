@@ -40,13 +40,13 @@ public class EventController {
 
         //Bean Validator 이용
         if(errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(errors);
         }
 
         //Custom Validator이용
         eventValidater.validate(eventDto,errors);
         if(errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(errors);
         }
 
         Event event = modelMapper.map(eventDto,Event.class);
