@@ -16,7 +16,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @Controller
 @RequestMapping(value = "/api/events", produces = "application/hal+json; charset=UTF-8")
 public class EventController {
-
     private final EventRepository eventRepository;
 
     private final ModelMapper modelMapper;
@@ -50,6 +49,7 @@ public class EventController {
         }
 
         Event event = modelMapper.map(eventDto,Event.class);
+        event.update();
         Event newEvent = this.eventRepository.save(event);
         URI createdUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
 
