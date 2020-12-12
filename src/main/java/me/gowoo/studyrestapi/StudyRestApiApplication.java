@@ -16,4 +16,5 @@ public class StudyRestApiApplication {
     public ModelMapper modelMapper(){
         return new ModelMapper();
     }
+
 }

@@ -7,7 +7,7 @@
 - REST Docs
 - Lombok
 - H2
-- PostgreSQL
+- MySQL
 
 - Valid (spring 2.3이후부터는 entity 필드값 검증에 사용되는 Valid는 dependency추가해야함)
 - JunitParams (파라미터있는 테스트코드 작성을 위해)
@@ -43,3 +43,17 @@ limitOfEnrollment|int|등록인원 제한
 offline | boolean| 장소에따라 온라인/오프라인
 free | boolean | 가격에따라 공짜인지 아닌지
 eventStatus | Enum |DRAFT, PUBLISHED, BEGAN_ENROLLMENT ( 초안, 발표, 등록 시작했는지)
+
+## Mysql 연결 설정과 Test시에는 H2설정
+```
+spring.datasource.username=user
+spring.datasource.password=pass
+spring.datasource.url=jdbc:mysql://localhost:3306/rest_study?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&useSSL=false
+
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_createion=true
+spring.jpa.properties.hibernate.format_sql=true
+
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+```
