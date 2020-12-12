@@ -1,5 +1,6 @@
 package me.gowoo.studyrestapi.events;
 
+import me.gowoo.studyrestapi.common.ErrorResource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -41,13 +42,13 @@ public class EventController {
 
         //Bean Validator 이용
         if(errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errors);
+            return badRequest(errors);
         }
 
         //Custom Validator이용
         eventValidater.validate(eventDto,errors);
         if(errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errors);
+            return badRequest(errors);
         }
 
         Event event = modelMapper.map(eventDto,Event.class);
@@ -63,5 +64,9 @@ public class EventController {
         eventResource.add(new Link("/docs/index.html#resources-events#resources-events-create").withRel("profile"));
 
         return ResponseEntity.created(createdUri).body(eventResource);
+    }
+
+    private ResponseEntity badRequest(Errors errors) {
+        return ResponseEntity.badRequest().body(ErrorResource.modelOf(errors));
     }
 }
