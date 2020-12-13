@@ -12,6 +12,10 @@
 - Valid (spring 2.3이후부터는 entity 필드값 검증에 사용되는 Valid는 dependency추가해야함)
 - JunitParams (파라미터있는 테스트코드 작성을 위해)
 - modelMapper (Entity DTO로 mapping)
+  
+plugin
+- asciidoctor-maven-plugin (asciidoc파일을 html파일로 바꿔 생성하기 위한 plugin)
+- maven-resources-plugin (build하고나서 생긴 docs파일을 static안의 폴더로 옮김으로써, 서버 실행시 url로 접속가능하게 만든다)
 
 ## 자바 버전
 - jdk 11
@@ -44,16 +48,24 @@ offline | boolean| 장소에따라 온라인/오프라인
 free | boolean | 가격에따라 공짜인지 아닌지
 eventStatus | Enum |DRAFT, PUBLISHED, BEGAN_ENROLLMENT ( 초안, 발표, 등록 시작했는지)
 
-## Mysql 연결 설정과 Test시에는 H2설정
-```
-spring.datasource.username=user
-spring.datasource.password=pass
-spring.datasource.url=jdbc:mysql://localhost:3306/rest_study?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&useSSL=false
-
-spring.jpa.hibernate.ddl-auto=create-drop
-spring.jpa.properties.hibernate.jdbc.lob.non_contextual_createion=true
-spring.jpa.properties.hibernate.format_sql=true
-
-logging.level.org.hibernate.SQL=DEBUG
-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
-```
+## 파일구조
+main
+ ┗━ asciidoc/index.adoc : REST Docs 생성위한 index.adoc파일
+ ┗━ java
+    ┗━ common
+         ┗━ ErrorResource : json형태의 Error메시지에 index링크 추가 하기 위한 파일
+         ┗━ ErrorSerialize : Errors메시지를 json형태로 Serialize하기 위함
+    ┗━ events
+         ┗━ Event : Event 도메인(entity)
+         ┗━ EventStatus : Event 도메인 필드중 enum값 정의
+         ┗━ EventDto : 도메인 생성시 직접 생성 못하는 값들을 검증하기 위해 DTO로 입력받고 Event로 변환하기 위한 Dto
+         ┗━ EventController
+         ┗━ EventRepository 
+         ┗━ EventResource : Event를 json형태로 바꿔 응답할때 링크도 추가하기 위함
+         ┗━ EventValidator : @Valid로 기본값 검증외의 custom 검증 정의
+    ┗━ index
+         ┗━ IndexController : index페이지로 요청시 다음 event가 들어있는 링크 json데이터 전송위한 로직
+    ┗━ StudyRestApiApplication : Main Method (EventDtp객체를 Event로 매핑시키기 위한 Model Mapper도 정의)
+┗━ resources
+    ┗━ application.properties
+test
