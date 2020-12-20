@@ -1,6 +1,6 @@
 package me.gowoo.studyrestapi.index;
 
-import me.gowoo.studyrestapi.common.BaseControllerTest;
+import me.gowoo.studyrestapi.common.BaseTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 
@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class IndexControllerTest extends BaseControllerTest {
+public class IndexControllerTest extends BaseTest {
 
     @Test
     public void index() throws Exception{

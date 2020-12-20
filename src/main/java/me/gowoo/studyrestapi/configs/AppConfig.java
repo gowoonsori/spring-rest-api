@@ -36,7 +36,7 @@ public class AppConfig {
             @Override
             public void run(ApplicationArguments args) throws Exception {
                 Account euisung = Account.builder()
-                        .email("euisung@naver.com")
+                        .email("1@naver.com")
                         .password("1234")
                         .roles(Set.of(AccountRole.ADMIN,AccountRole.USER))
                         .build();

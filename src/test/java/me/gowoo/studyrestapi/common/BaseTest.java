@@ -1,7 +1,7 @@
 package me.gowoo.studyrestapi.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -15,9 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Import(RestDocsConfiguration.class)
-@ActiveProfiles("test")
-@Ignore
-public class BaseControllerTest {
+@ActiveProfiles("Test")
+@Disabled
+public class BaseTest {
     @Autowired
     protected MockMvc mockMvc;
 
