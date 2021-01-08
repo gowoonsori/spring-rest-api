@@ -4,6 +4,7 @@ import me.gowoo.studyrestapi.accounts.Account;
 import me.gowoo.studyrestapi.accounts.AccountRepository;
 import me.gowoo.studyrestapi.accounts.AccountRole;
 import me.gowoo.studyrestapi.accounts.AccountService;
+import me.gowoo.studyrestapi.common.AppProperties;
 import me.gowoo.studyrestapi.common.BaseTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +42,9 @@ public class EventControllerTests extends BaseTest {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    AppProperties appProperties;
 
     @BeforeEach
     public void setUp(){
@@ -139,22 +143,17 @@ public class EventControllerTests extends BaseTest {
     }
 
     private String getAccessToken() throws Exception {
-        String username = "eui@naver.com";
-        String password = "1234";
         Account euisung = Account.builder()
-                .email(username)
-                .password(password)
+                .email(appProperties.getUserUsername())
+                .password(appProperties.getUserPassword())
                 .roles(Set.of(AccountRole.ADMIN,AccountRole.USER))
                 .build();
         this.accountService.saveAccount(euisung);
 
-        String clientId = "myApp";
-        String clientSecret = "pass";
-
         ResultActions perform = this.mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
-                .param("username", username)
-                .param("password", password)
+                .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+                .param("username", appProperties.getUserUsername())
+                .param("password", appProperties.getUserPassword())
                 .param("grant_type", "password"));
 
         var responseBody = perform.andReturn().getResponse().getContentAsString();
