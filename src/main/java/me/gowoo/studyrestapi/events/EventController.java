@@ -22,9 +22,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequestMapping(value = "/api/events", produces = "application/hal+json; charset=UTF-8")
 public class EventController {
     private final EventRepository eventRepository;
-
     private final ModelMapper modelMapper;
-
     private final EventValidator eventValidater;
 
     public EventController(EventRepository eventRepository,ModelMapper modelMapper,EventValidator eventValidater) {
